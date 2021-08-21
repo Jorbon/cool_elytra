@@ -21,7 +21,7 @@ public class GameRendererMixin {
 	@Shadow private MinecraftClient client;
 	private float previousRollAngle;
 	private final double wingPower = 1.25;
-	private final float rollSmoothing = 0.8f;
+	private final float rollSmoothing = 0.85f;
 	
 	@Inject(at = @At("HEAD"), method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
@@ -37,6 +37,7 @@ public class GameRendererMixin {
 			float rollAngle = 0.0f;
 			if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
 				double dot = (velocity.x * facing.x + velocity.z * facing.z) / Math.sqrt(horizontalFacing2 * horizontalSpeed2); // acos(dot) = angle between facing and velocity vectors
+				if (dot >= 1.0) dot = 1.0; // hopefully fix world disappearing occassionally which I assume would be due to ^^^ sqrt precision limits
 				double direction = Math.signum(velocity.x * facing.z - velocity.z * facing.x); // = which side laterally each vector is on
 				rollAngle = (float)(Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * this.wingPower) * direction * 57.29577951308);
 			}
@@ -48,6 +49,10 @@ public class GameRendererMixin {
 		} else {
 			this.previousRollAngle = 0f;
 		}
+	}
+
+	public static void main(String[] args) {
+		//Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * this.wingPower) * direction
 	}
 
 	public Vec3d getPlayerInstantaneousVelocity(float tickDelta) {
