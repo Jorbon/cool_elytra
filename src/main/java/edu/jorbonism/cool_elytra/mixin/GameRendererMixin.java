@@ -52,10 +52,6 @@ public class GameRendererMixin {
 		}
 	}
 
-	public static void main(String[] args) {
-		//Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * this.wingPower) * direction
-	}
-
 	public Vec3d getPlayerInstantaneousVelocity(float tickDelta) {
 		// copying over the important bits of elytra flight code and cleaning it up
 		// this is to smooth some jitteriness caused by rotation being frame-accurate but velocity only changing each tick
