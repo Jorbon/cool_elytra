@@ -133,8 +133,11 @@ public class GameRendererMixin {
 					String name = parts[0].trim();
 					if (name.equals("turning_force"))
 						this.wingPower = Double.parseDouble(parts[1].trim());
+						if (this.wingPower < 0) this.wingPower = 0;
 					else if (name.equals("roll_smoothing"))
 						this.rollSmoothing = Double.parseDouble(parts[1].trim());
+						if (this.rollSmoothing < 0) this.rollSmoothing = 0;
+						if (this.rollSmoothing > 1) this.rollSmoothing = 1;
 				}
 			}
 			
