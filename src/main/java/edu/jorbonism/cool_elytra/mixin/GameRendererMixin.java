@@ -1,5 +1,12 @@
 package edu.jorbonism.cool_elytra.mixin;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.util.Scanner;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,12 +26,23 @@ import net.minecraft.util.math.Vec3f;
 public class GameRendererMixin {
 
 	@Shadow private MinecraftClient client;
-	private float previousRollAngle;
-	private final double wingPower = 1.25;
-	private final float rollSmoothing = 0.85f;
+	@Shadow private float viewDistance;
+	private float previousRollAngle = 0.0f;
+	private double wingPower = 1.25;
+	private double rollSmoothing = 0.85;
+	private boolean configLoaded = false;
+	private static File configFile = new File(FileSystems.getDefault().getPath(System.getProperty("user.dir"), "config", "cool_elytra.cfg").toString());
 	
 	@Inject(at = @At("HEAD"), method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
+
+		// reload config when render distance changes
+		if (this.viewDistance != (float)(this.client.options.viewDistance * 16))
+			this.configLoaded = false;
+
+		if (!this.configLoaded)
+			this.loadConfig();
+
 		if (this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
 			Vec3d facing = this.client.player.getRotationVecClient();
 			Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
@@ -43,12 +61,12 @@ public class GameRendererMixin {
 				rollAngle = (float)(Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * this.wingPower) * direction * 57.29577951308);
 			}
 			// smooth changes to the roll angle and remove the bumpy crunchy
-			rollAngle = (1f - this.rollSmoothing) * rollAngle + this.rollSmoothing * this.previousRollAngle;
+			rollAngle = (float)((1.0 - this.rollSmoothing) * rollAngle + this.rollSmoothing * this.previousRollAngle);
 			this.previousRollAngle = rollAngle;
 			
 			matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(rollAngle));
 		} else {
-			this.previousRollAngle = 0f;
+			this.previousRollAngle = 0.0f;
 		}
 	}
 
@@ -97,6 +115,49 @@ public class GameRendererMixin {
 		newvz *= 0.9900000095367432;
 
 		return new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
+	}
+
+	public void loadConfig() {
+		try {
+			Scanner reader = new Scanner(configFile);
+			// separate by char #0 (end of file) so it gets the entire file together
+			reader.useDelimiter(Character.toString((char) 0));
+			String configString = reader.next();
+			reader.close();
+
+			// parse values
+			String[] data = configString.split("\n");
+			for (int n = 0; n < data.length; n++) {
+				String[] parts = data[n].split("#", 2)[0].split("=");
+				if (parts.length >= 2) {
+					String name = parts[0].trim();
+					if (name.equals("turning_force"))
+						this.wingPower = Double.parseDouble(parts[1].trim());
+					else if (name.equals("roll_smoothing"))
+						this.rollSmoothing = Double.parseDouble(parts[1].trim());
+				}
+			}
+			
+			System.out.println("Loaded Cool Elytra config from file");
+
+		} catch (FileNotFoundException e) {
+			System.out.println("No Cool Elytra config found, creating a new one");
+
+			this.wingPower = 1.25;
+			this.rollSmoothing = 0.85;
+			
+			// generate config file
+			try {
+				configFile.createNewFile();
+				FileWriter writer = new FileWriter(configFile);
+				writer.write("# Cool Elytra config\n\n# Controls sensitivity\n# Higher = more roll\nturning_force = 1.25\n\n# Smooths changes to roll angle\n# Closer to 1 is smoother\n# 0 is no smoothing, 1 stops roll completely\nroll_smoothing = 0.85\n");
+				writer.close();
+			} catch (IOException f) {
+				System.out.println("Couldn't create a Cool Elytra config file, using default settings");
+			}
+		}
+
+		this.configLoaded = true;
 	}
 
 	@Shadow public void loadProjectionMatrix(Matrix4f matrix4f) {}
