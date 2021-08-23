@@ -1,7 +1,10 @@
 # gradle
 
 .gradle/
-build/
+#build/classes/
+#build/loom-cache/
+#build/resources/
+#build/tmp/
 out/
 classes/
 
