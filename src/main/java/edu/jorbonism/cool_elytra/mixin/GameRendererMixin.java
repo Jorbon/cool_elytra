@@ -46,10 +46,6 @@ public class GameRendererMixin {
 		if (this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
 			Vec3d facing = this.client.player.getRotationVecClient();
 			Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
-			if (this.client.player.isSneaking()) {
-				System.out.println("facing: " + facing);
-				System.out.println("velocity: " + velocity);
-			}
 			double horizontalFacing2 = facing.horizontalLengthSquared();
 			double horizontalSpeed2 = velocity.horizontalLengthSquared();
 			float rollAngle = 0.0f;
