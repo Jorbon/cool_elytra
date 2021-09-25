@@ -1,0 +1,11 @@
+{
+	"cool_elytra.midnightconfig.title":"Cool Elytra Config",
+
+	"cool_elytra.midnightconfig.text_wingPower":"§aControls sensitivity.",
+	"cool_elytra.midnightconfig.wingPower":"Turning Force",
+	"cool_elytra.midnightconfig.wingPower.tooltip":"Higher = more roll",
+
+	"cool_elytra.midnightconfig.text_rollSmoothing":"§aSmooths changes to roll angle. §2Closer to 1 is smoother.",
+	"cool_elytra.midnightconfig.rollSmoothing":"Roll Smoothing",
+	"cool_elytra.midnightconfig.rollSmoothing.tooltip":"0 is no smoothing, 1 stops roll completely"
+}
