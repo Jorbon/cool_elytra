@@ -1,0 +1,11 @@
+{
+	"cool_elytra.midnightconfig.title":"Cool Elytra Config",
+
+	"cool_elytra.midnightconfig.text_wingPower":"§aControls sensitivity. §2Higher = stronger roll",
+	"cool_elytra.midnightconfig.wingPower":"Turning force",
+	"cool_elytra.midnightconfig.wingPower.tooltip":"Set to 0 to disable all camera rolling.",
+
+	"cool_elytra.midnightconfig.text_rollSmoothing":"§aSmooths changes to the camera's roll angle. §2Closer to 1 is smoother, 1 stops roll.",
+	"cool_elytra.midnightconfig.rollSmoothing":"Camera smoothing",
+	"cool_elytra.midnightconfig.rollSmoothing.tooltip":"Set to 0 to disable smoothing."
+}
