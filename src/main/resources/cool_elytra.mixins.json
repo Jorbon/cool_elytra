@@ -4,7 +4,8 @@
 	"package": "edu.jorbonism.cool_elytra.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"client": [
-		"GameRendererMixin"
+		"GameRendererMixin",
+		"FireworkRocketEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

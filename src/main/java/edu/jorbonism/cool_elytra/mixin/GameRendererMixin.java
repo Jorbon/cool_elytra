@@ -1,5 +1,6 @@
 package edu.jorbonism.cool_elytra.mixin;
 
+import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -91,6 +92,12 @@ public class GameRendererMixin {
 		newvy *= 0.9800000190734863;
 		newvz *= 0.9900000095367432;
 
-		return new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
+		Vec3d velocitynow = new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
+
+		if (CoolElytraClient.isRocketing) {
+			velocitynow = velocitynow.add(facing.x * 0.1 + (facing.x * 1.5 - velocitynow.x) * 0.5, facing.y * 0.1 + (facing.y * 1.5 - velocitynow.y) * 0.5, facing.z * 0.1 + (facing.z * 1.5 - velocitynow.z) * 0.5);
+		}
+
+		return velocitynow;
 	}
 }
