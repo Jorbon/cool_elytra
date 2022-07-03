@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FireworkRocketEntity.class)
 public abstract class FireworkRocketEntityMixin {
@@ -19,7 +20,7 @@ public abstract class FireworkRocketEntityMixin {
 	@Shadow private int lifeTime;
 
 	@Inject(method = "tick", at = @At("HEAD"))
-	public void tick() {
+	public void tick(CallbackInfo ci) {
 		if (this.wasShotByEntity() && this.shooter != null && this.shooter instanceof PlayerEntity && this.shooter.isFallFlying()) {
 			CoolElytraClient.isRocketing = this.life < this.lifeTime;
 		}
