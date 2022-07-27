@@ -1,5 +1,14 @@
 {
 	"cool_elytra.midnightconfig.title":"Cool Elytra Config",
+	
+	"category.cool_elytra":"Cool Elytra",
+	"key.cool_elytra.classic":"Classic mode",
+	"key.cool_elytra.realism":"Realistic mode",
+	"key.cool_elytra.disable":"Disable",
+
+	"cool_elytra.midnightconfig.text_mode":"§aDetermines which behavior to use. §21: camera rolling, 2: realistic flight, 0: disable",
+	"cool_elytra.midnightconfig.mode":"Elytra mode",
+	"cool_elytra.midnightconfig.mode.tooltip":"e",
 
 	"cool_elytra.midnightconfig.text_wingPower":"§aControls sensitivity. §2Higher = stronger roll",
 	"cool_elytra.midnightconfig.wingPower":"Turning force",

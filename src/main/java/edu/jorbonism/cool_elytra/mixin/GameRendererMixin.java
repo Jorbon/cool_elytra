@@ -2,6 +2,7 @@ package edu.jorbonism.cool_elytra.mixin;
 
 import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,31 +21,48 @@ import net.minecraft.util.math.Vec3f;
 public class GameRendererMixin {
 
 	@Final @Shadow private MinecraftClient client;
-	private float previousRollAngle = 0.0f;
 	
-	@Inject(at = @At("HEAD"), method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V")
+	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
-		if (this.client.player != null && this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
-			Vec3d facing = this.client.player.getRotationVecClient();
-			Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
-			double horizontalFacing2 = facing.horizontalLengthSquared();
-			double horizontalSpeed2 = velocity.horizontalLengthSquared();
-			float rollAngle = 0.0f;
-			if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
-				double dot = (velocity.x * facing.x + velocity.z * facing.z) / Math.sqrt(horizontalFacing2 * horizontalSpeed2); // acos(dot) = angle between facing and velocity vectors
-				if (dot >= 1.0) dot = 1.0; // hopefully fix world disappearing occassionally which I assume would be due to ^^^ sqrt precision limits
-				else if (dot <= -1.0) dot = -1.0;
-				double direction = Math.signum(velocity.x * facing.z - velocity.z * facing.x); // = which side laterally each vector is on
-				rollAngle = (float)(Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * CoolElytraConfig.wingPower) * direction * 57.29577951308);
+		if (CoolElytraConfig.mode == 1) {
+
+			// original camera rolling
+			if (this.client.player != null && this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
+				Vec3d facing = this.client.player.getRotationVecClient();
+				Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
+				double horizontalFacing2 = facing.horizontalLengthSquared();
+				double horizontalSpeed2 = velocity.horizontalLengthSquared();
+				float rollAngle = 0.0f;
+				if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
+					double dot = (velocity.x * facing.x + velocity.z * facing.z) / Math.sqrt(horizontalFacing2 * horizontalSpeed2); // acos(dot) = angle between facing and velocity vectors
+					if (dot >= 1.0) dot = 1.0; // hopefully fix world disappearing occassionally which I assume would be due to ^^^ sqrt precision limits
+					else if (dot <= -1.0) dot = -1.0;
+					double direction = Math.signum(velocity.x * facing.z - velocity.z * facing.x); // = which side laterally each vector is on
+					rollAngle = (float)(Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * CoolElytraConfig.wingPower) * direction * CoolElytraClient.TODEG);
+				}
+				// smooth changes to the roll angle and remove the bumpy crunchy
+				rollAngle = (float)((1.0 - CoolElytraConfig.rollSmoothing) * rollAngle + CoolElytraConfig.rollSmoothing * CoolElytraClient.lastRollAngle);
+				CoolElytraClient.lastRollAngle = rollAngle;
+				
+				matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(rollAngle));
+			} else {
+				CoolElytraClient.lastRollAngle = 0.0f;
 			}
-			// smooth changes to the roll angle and remove the bumpy crunchy
-			rollAngle = (float)((1.0 - CoolElytraConfig.rollSmoothing) * rollAngle + CoolElytraConfig.rollSmoothing * this.previousRollAngle);
-			this.previousRollAngle = rollAngle;
-			
-			matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(rollAngle));
-		} else {
-			this.previousRollAngle = 0.0f;
+
+		} else if (CoolElytraConfig.mode == 2) {
+
+			// real rolling flight
+			if (this.client.player == null || !this.client.player.isFallFlying()) return;
+
+			double angle = -Math.acos(CoolElytraClient.left.dotProduct(CoolElytraClient.getAssumedLeft(this.client.player.getYaw()))) * CoolElytraClient.TODEG;
+			if (CoolElytraClient.left.getY() < 0) angle *= -1;
+			matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float)angle));
+			CoolElytraClient.lastRollAngle = (float)angle;
+
 		}
+		
+
+		
 	}
 
 	public Vec3d getPlayerInstantaneousVelocity(float tickDelta) {
@@ -92,12 +110,12 @@ public class GameRendererMixin {
 		newvy *= 0.9800000190734863;
 		newvz *= 0.9900000095367432;
 
-		Vec3d velocitynow = new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
-
 		if (CoolElytraClient.isRocketing) {
-			velocitynow = velocitynow.add(facing.x * 0.1 + (facing.x * 1.5 - velocitynow.x) * 0.5, facing.y * 0.1 + (facing.y * 1.5 - velocitynow.y) * 0.5, facing.z * 0.1 + (facing.z * 1.5 - velocitynow.z) * 0.5);
+			newvx += facing.x * 0.1 + (facing.x * 1.5 - newvx) * 0.5;
+			newvy += facing.y * 0.1 + (facing.y * 1.5 - newvy) * 0.5;
+			newvz += facing.z * 0.1 + (facing.z * 1.5 - newvz) * 0.5;
 		}
 
-		return velocitynow;
+		return new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
 	}
 }
