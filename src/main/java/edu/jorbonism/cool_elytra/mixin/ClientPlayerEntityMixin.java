@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
+import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -32,10 +33,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
 		Vec3d facing = this.getRotationVecClient();
 
-        // set left vector to the assumed upright left if not in flight in mode 2
-		if (!this.isFallFlying() || CoolElytraConfig.mode != 2) {
+        // set left vector to the assumed upright left if not in realistic
+		if (!this.isFallFlying() || CoolElytraConfig.modMode != Mode.REALISTIC) {
 			CoolElytraClient.left = CoolElytraClient.getAssumedLeft(this.getYaw());
-            if (CoolElytraConfig.mode == 1) {
+            if (CoolElytraConfig.modMode == Mode.CLASSIC) {
                 CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, CoolElytraClient.lastRollAngle * CoolElytraClient.TORAD);
             }
 			super.changeLookDirection(cursorDeltaX, cursorDeltaY);
@@ -46,16 +47,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		CoolElytraClient.left = CoolElytraClient.left.subtract(facing.multiply(CoolElytraClient.left.dotProduct(facing))).normalize();
 
 		// pitch
-		facing = CoolElytraClient.rotateAxisAngle(facing, CoolElytraClient.left, -0.15 * cursorDeltaY * CoolElytraClient.TORAD);
+		facing = CoolElytraClient.rotateAxisAngle(facing, CoolElytraClient.left, -0.15 * cursorDeltaY * CoolElytraClient.TORAD * CoolElytraConfig.pitchSensitivity);
 		
-		if (this.isSneaking()) {
+		double angle = 0.15 * cursorDeltaX * CoolElytraClient.TORAD;
+		if (this.isSneaking() ^ CoolElytraConfig.swap) {
 			// yaw
+			angle *= CoolElytraConfig.yawSensitivity;
 			Vec3d up = facing.crossProduct(CoolElytraClient.left);
-			facing = CoolElytraClient.rotateAxisAngle(facing, up, 0.15 * cursorDeltaX * CoolElytraClient.TORAD);
-			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, up, 0.15 * cursorDeltaX * CoolElytraClient.TORAD);
+			facing = CoolElytraClient.rotateAxisAngle(facing, up, angle);
+			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, up, angle);
 		} else {
 			// roll
-			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, 0.15 * cursorDeltaX * CoolElytraClient.TORAD);
+			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, angle * CoolElytraConfig.rollSensitivity);
 		}
 
 		
