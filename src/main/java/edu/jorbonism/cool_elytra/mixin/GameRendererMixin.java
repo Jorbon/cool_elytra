@@ -2,6 +2,7 @@ package edu.jorbonism.cool_elytra.mixin;
 
 import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
+import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +25,7 @@ public class GameRendererMixin {
 	
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
-		if (CoolElytraConfig.mode == 1) {
+		if (CoolElytraConfig.modMode == Mode.CLASSIC) {
 
 			// original camera rolling
 			if (this.client.player != null && this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
@@ -49,7 +50,7 @@ public class GameRendererMixin {
 				CoolElytraClient.lastRollAngle = 0.0f;
 			}
 
-		} else if (CoolElytraConfig.mode == 2) {
+		} else if (CoolElytraConfig.modMode == Mode.REALISTIC) {
 
 			// real rolling flight
 			if (this.client.player == null || !this.client.player.isFallFlying()) return;
