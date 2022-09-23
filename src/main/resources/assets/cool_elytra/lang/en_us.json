@@ -6,15 +6,16 @@
 	"key.cool_elytra.realism":"Realistic mode",
 	"key.cool_elytra.disable":"Disable",
 
-	"cool_elytra.midnightconfig.text_mode":"§aDetermines which behavior to use. §21: camera rolling, 2: realistic flight, 0: disable",
-	"cool_elytra.midnightconfig.mode":"Elytra mode",
-	"cool_elytra.midnightconfig.mode.tooltip":"e",
-
-	"cool_elytra.midnightconfig.text_wingPower":"§aControls sensitivity. §2Higher = stronger roll",
-	"cool_elytra.midnightconfig.wingPower":"Turning force",
-	"cool_elytra.midnightconfig.wingPower.tooltip":"Set to 0 to disable all camera rolling.",
-
-	"cool_elytra.midnightconfig.text_rollSmoothing":"§aSmooths changes to the camera's roll angle. §2Closer to 1 is smoother, 1 stops roll.",
-	"cool_elytra.midnightconfig.rollSmoothing":"Camera smoothing",
-	"cool_elytra.midnightconfig.rollSmoothing.tooltip":"Set to 0 to disable smoothing."
+	"cool_elytra.midnightconfig.modMode":"Elytra roll mode",
+	"cool_elytra.midnightconfig.enum.Mode.CLASSIC":"Classic",
+	"cool_elytra.midnightconfig.enum.Mode.REALISTIC":"Realistic",
+	"cool_elytra.midnightconfig.enum.Mode.DISABLED":"Disabled",
+	"cool_elytra.midnightconfig.classic":"Classic mode settings",
+	"cool_elytra.midnightconfig.wingPower":"Turning force (Rolling sensitivity)",
+	"cool_elytra.midnightconfig.rollSmoothing":"Camera rotation smoothing",
+	"cool_elytra.midnightconfig.realistic":"Realistic mode settings",
+	"cool_elytra.midnightconfig.swap":"Swap roll and yaw (shift to roll)",
+	"cool_elytra.midnightconfig.rollSensitivity":"Roll sensitivity",
+	"cool_elytra.midnightconfig.yawSensitivity":"Yaw sensitivity",
+	"cool_elytra.midnightconfig.pitchSensitivity":"Pitch sensitivity"
 }

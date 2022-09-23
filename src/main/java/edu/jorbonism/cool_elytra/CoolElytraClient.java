@@ -3,6 +3,7 @@ package edu.jorbonism.cool_elytra;
 import org.lwjgl.glfw.GLFW;
 
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
+import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -18,12 +19,12 @@ public class CoolElytraClient implements ClientModInitializer {
     
     @Override
     public void onInitializeClient() {
-        CoolElytraConfig.init("cool_elytra", CoolElytraConfig.class);
+		CoolElytraConfig.init("cool_elytra", CoolElytraConfig.class);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (keyRealism.wasPressed()) CoolElytraConfig.mode = 2;
-			while (keyClassic.wasPressed()) CoolElytraConfig.mode = 1;
-			while (keyDisable.wasPressed()) CoolElytraConfig.mode = 0;
+			while (keyRealism.wasPressed()) CoolElytraConfig.modMode = Mode.REALISTIC;
+			while (keyClassic.wasPressed()) CoolElytraConfig.modMode = Mode.CLASSIC;
+			while (keyDisable.wasPressed()) CoolElytraConfig.modMode = Mode.DISABLED;
 		});
     }
 
@@ -72,5 +73,4 @@ public class CoolElytraClient implements ClientModInitializer {
 		
 		return new Vec3d(x, y, z);
 	}
-    
 }
