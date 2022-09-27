@@ -30,6 +30,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		CoolElytraClient.left = CoolElytraClient.getAssumedLeft(this.getYaw());
 	}
 
+	@Override
 	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
 		Vec3d facing = this.getRotationVecClient();
 
@@ -43,23 +44,31 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			return;
 		}
 
-
+		// recompute left vector since it tends to drift off of perpendicular/normalized
 		CoolElytraClient.left = CoolElytraClient.left.subtract(facing.multiply(CoolElytraClient.left.dotProduct(facing))).normalize();
 
 		// pitch
 		facing = CoolElytraClient.rotateAxisAngle(facing, CoolElytraClient.left, -0.15 * cursorDeltaY * CoolElytraClient.TORAD * CoolElytraConfig.pitchSensitivity);
 		
-		double angle = 0.15 * cursorDeltaX * CoolElytraClient.TORAD;
-		if (this.isSneaking() ^ CoolElytraConfig.swap) {
-			// yaw
-			angle *= CoolElytraConfig.yawSensitivity;
-			Vec3d up = facing.crossProduct(CoolElytraClient.left);
-			facing = CoolElytraClient.rotateAxisAngle(facing, up, angle);
-			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, up, angle);
-		} else {
-			// roll
-			CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, angle * CoolElytraConfig.rollSensitivity);
+
+		double rollAngle = 0.15 * cursorDeltaX * CoolElytraClient.TORAD;
+		double yawAngle = 0.15 * CoolElytraClient.cursorDeltaZ * CoolElytraClient.TORAD;
+		CoolElytraClient.cursorDeltaZ = 0;
+		if ((this.isSneaking() ^ CoolElytraConfig.swap) && !CoolElytraClient.isKeyUpdate) {
+			double tmp = rollAngle;
+			rollAngle = yawAngle;
+			yawAngle = tmp;
 		}
+
+		// yaw
+		if (!CoolElytraClient.isKeyUpdate) yawAngle *= CoolElytraConfig.yawSensitivity;
+		Vec3d up = facing.crossProduct(CoolElytraClient.left);
+		facing = CoolElytraClient.rotateAxisAngle(facing, up, yawAngle);
+		CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, up, yawAngle);
+
+		// roll
+		if (!CoolElytraClient.isKeyUpdate) rollAngle *= CoolElytraConfig.rollSensitivity;
+		CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, rollAngle);
 
 		
 		double deltaY = -Math.asin(facing.getY()) * CoolElytraClient.TODEG - this.getPitch();
@@ -67,4 +76,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 		super.changeLookDirection(deltaX / 0.15, deltaY / 0.15);
     }
+
+	@Override
+	public void travel(Vec3d movementInput) {
+		CoolElytraClient.strafeInput = Math.signum(movementInput.x);
+		super.travel(movementInput);
+	}
 }

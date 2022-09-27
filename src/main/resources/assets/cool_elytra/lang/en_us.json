@@ -10,12 +10,18 @@
 	"cool_elytra.midnightconfig.enum.Mode.CLASSIC":"Classic",
 	"cool_elytra.midnightconfig.enum.Mode.REALISTIC":"Realistic",
 	"cool_elytra.midnightconfig.enum.Mode.DISABLED":"Disabled",
-	"cool_elytra.midnightconfig.classic":"Classic mode settings",
+	"cool_elytra.midnightconfig.classic":"§e§nClassic mode settings",
 	"cool_elytra.midnightconfig.wingPower":"Turning force (Rolling sensitivity)",
 	"cool_elytra.midnightconfig.rollSmoothing":"Camera rotation smoothing",
-	"cool_elytra.midnightconfig.realistic":"Realistic mode settings",
-	"cool_elytra.midnightconfig.swap":"Swap roll and yaw (shift to roll)",
+	"cool_elytra.midnightconfig.realistic":"§e§nRealistic mode settings",
+	"cool_elytra.midnightconfig.swap":"Swap roll and yaw (shift to roll with mouse)",
 	"cool_elytra.midnightconfig.rollSensitivity":"Roll sensitivity",
 	"cool_elytra.midnightconfig.yawSensitivity":"Yaw sensitivity",
-	"cool_elytra.midnightconfig.pitchSensitivity":"Pitch sensitivity"
+	"cool_elytra.midnightconfig.pitchSensitivity":"Pitch sensitivity",
+	"cool_elytra.midnightconfig.keyRollSensitivity":"Key roll sensitivity",
+	"cool_elytra.midnightconfig.keyYawSensitivity":"Key yaw sensitivity",
+	"cool_elytra.midnightconfig.keyRollMomentum":"Key roll momentum",
+	"cool_elytra.midnightconfig.keyYawMomentum":"Key yaw momentum",
+	"cool_elytra.midnightconfig.keyRollSpeedCap":"Key roll speed cap",
+	"cool_elytra.midnightconfig.keyYawSpeedCap":"Key yaw speed cap"
 }

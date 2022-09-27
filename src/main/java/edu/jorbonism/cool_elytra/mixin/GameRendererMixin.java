@@ -25,41 +25,79 @@ public class GameRendererMixin {
 	
 	@Inject(at = @At("HEAD"), method = "renderWorld")
 	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
-		if (CoolElytraConfig.modMode == Mode.CLASSIC) {
+		// timer stuff
+		long time = System.nanoTime();
+		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
+		CoolElytraClient.lastTime = time;
 
+
+		if (CoolElytraConfig.modMode == Mode.CLASSIC) {
 			// original camera rolling
 			if (this.client.player != null && this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
 				Vec3d facing = this.client.player.getRotationVecClient();
 				Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
 				double horizontalFacing2 = facing.horizontalLengthSquared();
 				double horizontalSpeed2 = velocity.horizontalLengthSquared();
-				float rollAngle = 0.0f;
+				double rollAngle = 0;
 				if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
 					double dot = (velocity.x * facing.x + velocity.z * facing.z) / Math.sqrt(horizontalFacing2 * horizontalSpeed2); // acos(dot) = angle between facing and velocity vectors
 					if (dot >= 1.0) dot = 1.0; // hopefully fix world disappearing occassionally which I assume would be due to ^^^ sqrt precision limits
 					else if (dot <= -1.0) dot = -1.0;
 					double direction = Math.signum(velocity.x * facing.z - velocity.z * facing.x); // = which side laterally each vector is on
-					rollAngle = (float)(Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * CoolElytraConfig.wingPower) * direction * CoolElytraClient.TODEG);
+					rollAngle = Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * CoolElytraConfig.wingPower) * direction * CoolElytraClient.TODEG;
 				}
 				// smooth changes to the roll angle and remove the bumpy crunchy
-				rollAngle = (float)((1.0 - CoolElytraConfig.rollSmoothing) * rollAngle + CoolElytraConfig.rollSmoothing * CoolElytraClient.lastRollAngle);
+				rollAngle += Math.pow(CoolElytraConfig.rollSmoothing, frameTime * 40) * (CoolElytraClient.lastRollAngle - rollAngle);
 				CoolElytraClient.lastRollAngle = rollAngle;
 				
-				matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(rollAngle));
+				matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float)rollAngle));
 			} else {
 				CoolElytraClient.lastRollAngle = 0.0f;
 			}
+			
+			CoolElytraClient.yawVelocity = 0;
+			CoolElytraClient.rollVelocity = 0;
 
 		} else if (CoolElytraConfig.modMode == Mode.REALISTIC) {
 
 			// real rolling flight
-			if (this.client.player == null || !this.client.player.isFallFlying()) return;
+			if (this.client.player == null || !this.client.player.isFallFlying()) {
+				CoolElytraClient.yawVelocity = 0;
+				CoolElytraClient.rollVelocity = 0;
+				return;
+			}
+
+			// handle key input turning
+			if (CoolElytraClient.strafeInput != 0 && !(this.client.player.isSneaking() ^ CoolElytraConfig.swap)) {
+				CoolElytraClient.yawVelocity -= CoolElytraClient.strafeInput * frameTime * CoolElytraConfig.keyYawSensitivity * 25;
+				if (CoolElytraClient.yawVelocity < -CoolElytraConfig.keyYawSpeedCap) CoolElytraClient.yawVelocity = -CoolElytraConfig.keyYawSpeedCap;
+				else if (CoolElytraClient.yawVelocity > CoolElytraConfig.keyYawSpeedCap) CoolElytraClient.yawVelocity = CoolElytraConfig.keyYawSpeedCap;
+			} else {
+				CoolElytraClient.yawVelocity -= Math.signum(CoolElytraClient.yawVelocity) * Math.min(frameTime * CoolElytraConfig.keyYawSensitivity * 25 / CoolElytraConfig.keyYawMomentum, Math.abs(CoolElytraClient.yawVelocity));
+			}
+
+			if (CoolElytraClient.strafeInput != 0 && (this.client.player.isSneaking() ^ CoolElytraConfig.swap)) {
+				CoolElytraClient.rollVelocity -= CoolElytraClient.strafeInput * frameTime * CoolElytraConfig.keyRollSensitivity * 25;
+				if (CoolElytraClient.rollVelocity < -CoolElytraConfig.keyRollSpeedCap) CoolElytraClient.rollVelocity = -CoolElytraConfig.keyRollSpeedCap;
+				else if (CoolElytraClient.rollVelocity > CoolElytraConfig.keyRollSpeedCap) CoolElytraClient.rollVelocity = CoolElytraConfig.keyRollSpeedCap;
+			} else {
+				CoolElytraClient.rollVelocity -= Math.signum(CoolElytraClient.rollVelocity) * Math.min(frameTime * CoolElytraConfig.keyRollSensitivity * 25 / CoolElytraConfig.keyRollMomentum, Math.abs(CoolElytraClient.rollVelocity));
+			}
+
+			CoolElytraClient.isKeyUpdate = true;
+			CoolElytraClient.cursorDeltaZ = CoolElytraClient.yawVelocity;
+			this.client.player.changeLookDirection(CoolElytraClient.rollVelocity, 0);
+			CoolElytraClient.isKeyUpdate = false;
+
 
 			double angle = -Math.acos(CoolElytraClient.left.dotProduct(CoolElytraClient.getAssumedLeft(this.client.player.getYaw()))) * CoolElytraClient.TODEG;
 			if (CoolElytraClient.left.getY() < 0) angle *= -1;
 			matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float)angle));
 			CoolElytraClient.lastRollAngle = (float)angle;
 
+		} else {
+			CoolElytraClient.yawVelocity = 0;
+			CoolElytraClient.rollVelocity = 0;
 		}
 		
 
