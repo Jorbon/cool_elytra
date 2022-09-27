@@ -14,9 +14,9 @@ public class CoolElytraConfig extends MidnightConfig {
 	@Entry public static double yawSensitivity = 1;
 	@Entry public static double pitchSensitivity = 1;
 	@Entry public static double keyRollSensitivity = 1;
-	@Entry public static double keyYawSensitivity = 1;
+	@Entry public static double keyYawSensitivity = 2;
 	@Entry public static double keyRollMomentum = 1;
 	@Entry public static double keyYawMomentum = 1;
 	@Entry public static double keyRollSpeedCap = 40;
-	@Entry public static double keyYawSpeedCap = 40;
+	@Entry public static double keyYawSpeedCap = 15;
 }
