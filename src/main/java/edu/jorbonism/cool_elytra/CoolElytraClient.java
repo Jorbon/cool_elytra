@@ -13,11 +13,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class CoolElytraClient implements ClientModInitializer {
 
-	
-	public static double lastRollAngle = 0;
-	public static boolean isRocketing = false;
-    
-    @Override
+	@Override
     public void onInitializeClient() {
 		CoolElytraConfig.init("cool_elytra", CoolElytraConfig.class);
 
@@ -27,19 +23,23 @@ public class CoolElytraClient implements ClientModInitializer {
 			while (keyDisable.wasPressed()) CoolElytraConfig.modMode = Mode.DISABLED;
 		});
     }
-
-
+	
+	public static long lastTime = System.nanoTime();
+	public static double lastRollAngle = 0;
+	public static boolean isRocketing = false;
     public static Vec3d left;
+	public static double rollVelocity = 0;
+	public static double yawVelocity = 0;
+	public static double strafeInput = 0;
+	public static boolean isKeyUpdate = false;
+	public static double cursorDeltaZ = 0;
 	public static final double TORAD = Math.PI / 180;
 	public static final double TODEG = 1 / TORAD;
-
 
 	private static KeyBinding keyClassic = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.classic", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
 	private static KeyBinding keyRealism = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.realism", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
 	private static KeyBinding keyDisable = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.disable", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
 	
-
-
 
 	public static Vec3d getAssumedLeft(float yaw) {
 		yaw *= TORAD;
