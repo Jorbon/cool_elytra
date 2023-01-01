@@ -4,6 +4,9 @@ import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,7 +19,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -50,7 +52,7 @@ public class GameRendererMixin {
 				rollAngle += Math.pow(CoolElytraConfig.rollSmoothing, frameTime * 40) * (CoolElytraClient.lastRollAngle - rollAngle);
 				CoolElytraClient.lastRollAngle = rollAngle;
 				
-				matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float)rollAngle));
+				matrix.multiply(new Quaternionf(new AxisAngle4f((float)(rollAngle * CoolElytraClient.TORAD), new Vector3f(0, 0, 1))));
 			} else {
 				CoolElytraClient.lastRollAngle = 0.0f;
 			}
@@ -92,7 +94,7 @@ public class GameRendererMixin {
 
 			double angle = -Math.acos(CoolElytraClient.left.dotProduct(CoolElytraClient.getAssumedLeft(this.client.player.getYaw()))) * CoolElytraClient.TODEG;
 			if (CoolElytraClient.left.getY() < 0) angle *= -1;
-			matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float)angle));
+			matrix.multiply(new Quaternionf(new AxisAngle4f((float)(angle * CoolElytraClient.TORAD), new Vector3f(0, 0, 1))));
 			CoolElytraClient.lastRollAngle = (float)angle;
 
 		} else {
