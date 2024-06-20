@@ -9,7 +9,6 @@ import edu.jorbonism.cool_elytra.CoolElytraClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FireworkRocketEntity.class)
@@ -25,9 +24,7 @@ public abstract class FireworkRocketEntityMixin {
 			CoolElytraClient.isRocketing = this.life < this.lifeTime;
 		}
 	}
-
+	
 	@Shadow private boolean wasShotByEntity() { return false; }
-	@Shadow public ItemStack getStack() { return null; }
-	@Shadow protected void initDataTracker() {}
 	
 }
