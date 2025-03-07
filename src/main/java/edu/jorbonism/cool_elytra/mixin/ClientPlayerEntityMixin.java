@@ -34,7 +34,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		Vec3d facing = this.getRotationVecClient();
 		
         // set left vector to the assumed upright left if not in realistic
-		if (!this.isFallFlying() || CoolElytraConfig.modMode != Mode.REALISTIC) {
+		if (!this.isGliding() || CoolElytraConfig.modMode != Mode.REALISTIC) {
 			CoolElytraClient.left = CoolElytraClient.getAssumedLeft(this.getYaw());
             if (CoolElytraConfig.modMode == Mode.CLASSIC) {
                 CoolElytraClient.left = CoolElytraClient.rotateAxisAngle(CoolElytraClient.left, facing, CoolElytraClient.rollAngle * CoolElytraClient.TORAD);
