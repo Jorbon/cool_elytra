@@ -35,7 +35,7 @@ public abstract class GameRendererMixin {
 		
 		if (CoolElytraConfig.modMode == Mode.CLASSIC) {
 			// original camera rolling
-			if (this.client.player != null && this.client.player.isFallFlying() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
+			if (this.client.player != null && this.client.player.isGliding() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
 				Vec3d facing = this.client.player.getRotationVecClient();
 				Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
 				double horizontalFacing2 = facing.horizontalLengthSquared();
@@ -63,7 +63,7 @@ public abstract class GameRendererMixin {
 		} else if (CoolElytraConfig.modMode == Mode.REALISTIC) {
 			// real rolling flight
 			
-			if (this.client.player != null && this.client.player.isFallFlying()) {
+			if (this.client.player != null && this.client.player.isGliding()) {
 				// handle key input turning
 				if (CoolElytraClient.strafeInput != 0 && !(this.client.player.isSneaking() ^ CoolElytraConfig.swap)) {
 					CoolElytraClient.yawVelocity -= CoolElytraClient.strafeInput * frameTime * CoolElytraConfig.keyYawSensitivity * 25;
