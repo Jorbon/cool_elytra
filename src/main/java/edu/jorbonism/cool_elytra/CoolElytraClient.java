@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class CoolElytraClient implements ClientModInitializer {
@@ -37,9 +38,10 @@ public class CoolElytraClient implements ClientModInitializer {
 	public static final double TORAD = Math.PI / 180;
 	public static final double TODEG = 1 / TORAD;
 	
-	private static KeyBinding keyClassic = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.classic", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
-	private static KeyBinding keyRealism = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.realism", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
-	private static KeyBinding keyDisable = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.disable", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.cool_elytra"));
+	private static final KeyBinding.Category COOL_ELYTRA_CATEGORY = KeyBinding.Category.create(Identifier.of("cool_elytra"));
+	private static final KeyBinding keyClassic = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.classic", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static final KeyBinding keyRealism = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.realism", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static final KeyBinding keyDisable = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.cool_elytra.disable", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
 	
 	
 	public static Vec3d getAssumedLeft(float yaw) {
