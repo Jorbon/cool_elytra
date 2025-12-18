@@ -1,7 +1,7 @@
 {
 	"cool_elytra.midnightconfig.title":"Cool Elytra Config",
 	
-	"category.cool_elytra":"Cool Elytra",
+	"key.category.minecraft.cool_elytra":"Cool Elytra",
 	"key.cool_elytra.classic":"Classic mode",
 	"key.cool_elytra.realism":"Realistic mode",
 	"key.cool_elytra.disable":"Disable",
