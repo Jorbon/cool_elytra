@@ -1,9 +1,24 @@
 pluginManagement {
     repositories {
+        mavenCentral()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Fabric'
+            url  = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Mojang Libs'
+            url  = 'https://libraries.minecraft.net/'
+        }
     }
 }

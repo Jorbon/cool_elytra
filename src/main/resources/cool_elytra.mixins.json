@@ -1,8 +1,7 @@
 {
 	"required": true,
-	"minVersion": "0.8",
 	"package": "edu.jorbonism.cool_elytra.mixin",
-	"compatibilityLevel": "JAVA_21",
+	"compatibilityLevel": "JAVA_${java_version}",
 	"client": [
 		"GameRendererMixin",
 		"FireworkRocketEntityMixin",
