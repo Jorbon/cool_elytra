@@ -98,6 +98,7 @@ public abstract class GameRendererMixin {
 			}
 			
 		} else {
+			CoolElytraClient.rollAngle = 0;
 			CoolElytraClient.yawVelocity = 0;
 			CoolElytraClient.rollVelocity = 0;
 		}
