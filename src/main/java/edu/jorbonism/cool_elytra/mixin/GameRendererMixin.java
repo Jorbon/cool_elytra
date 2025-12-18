@@ -29,7 +29,7 @@ public abstract class GameRendererMixin {
 		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
 		CoolElytraClient.lastTime = time;
 		
-		float tickDelta = tickCounter.getTickProgress(true);
+		float tickDelta = tickCounter.getTickDelta(true);
 		
 		CoolElytraClient.isFrontView = this.client.options.getPerspective().isFrontView();
 		
