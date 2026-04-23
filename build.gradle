@@ -42,6 +42,7 @@ dependencies {
 
 
 processResources {
+	inputs.property "maven_group", project.maven_group
 	inputs.property "version", project.version
 	inputs.property "project_id", project.project_id
 	inputs.property "java_version", project.java_version
@@ -49,6 +50,7 @@ processResources {
 	
 	filesMatching("fabric.mod.json") {
 		expand (
+			maven_group: inputs.properties.maven_group,
 			project_id: inputs.properties.project_id,
 			version: inputs.properties.version,
 			java_version: inputs.properties.java_version,
@@ -58,6 +60,8 @@ processResources {
 	
 	filesMatching("*.mixins.json") {
 		expand (
+			maven_group: inputs.properties.maven_group,
+			project_id: inputs.properties.project_id,
 			java_version: JavaVersion.toVersion(project.java_version).toString().replace(".", "_"),
 		)
 	}
