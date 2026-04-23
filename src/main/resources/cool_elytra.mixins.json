@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "edu.jorbonism.cool_elytra.mixin",
+	"package": "${maven_group}.${project_id}.mixin",
 	"compatibilityLevel": "JAVA_${java_version}",
 	"client": [
 		"GameRendererMixin",

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "cool_elytra",
+	"id": "${project_id}",
 	"version": "${version}",
 	
 	"name": "Cool Elytra",
