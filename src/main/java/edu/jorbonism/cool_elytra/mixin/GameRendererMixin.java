@@ -3,7 +3,11 @@ package edu.jorbonism.cool_elytra.mixin;
 import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
-
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,35 +15,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
 	
-	@Final @Shadow private MinecraftClient client;
+	@Final @Shadow private Minecraft minecraft;
 	
-	@Inject(at = @At("HEAD"), method = "renderWorld")
-	public void renderWorld(RenderTickCounter tickCounter, CallbackInfo ci) {
+	@Inject(at = @At("HEAD"), method = "renderLevel")
+	public void renderWorld(DeltaTracker tickCounter, CallbackInfo ci) {
 		// timer stuff
 		long time = System.nanoTime();
 		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
 		CoolElytraClient.lastTime = time;
 		
-		float tickDelta = tickCounter.getTickProgress(true);
+		float tickDelta = tickCounter.getGameTimeDeltaPartialTick(true);
 		
-		CoolElytraClient.isFrontView = this.client.options.getPerspective().isFrontView();
+		CoolElytraClient.isFrontView = this.minecraft.options.getCameraType().isMirrored();
 		
 		if (CoolElytraConfig.modMode == Mode.CLASSIC) {
 			// original camera rolling
-			if (this.client.player != null && this.client.player.isGliding() && !(this.client.player.isTouchingWater() || this.client.player.isInLava())) {
-				Vec3d facing = this.client.player.getRotationVecClient();
-				Vec3d velocity = this.getPlayerInstantaneousVelocity(tickDelta);
-				double horizontalFacing2 = facing.horizontalLengthSquared();
-				double horizontalSpeed2 = velocity.horizontalLengthSquared();
+			if (this.minecraft.player != null && this.minecraft.player.isFallFlying() && !(this.minecraft.player.isInWater() || this.minecraft.player.isInLava())) {
+				Vec3 facing = this.minecraft.player.getForward();
+				Vec3 velocity = this.getPlayerInstantaneousVelocity(tickDelta);
+				double horizontalFacing2 = facing.horizontalDistanceSqr();
+				double horizontalSpeed2 = velocity.horizontalDistanceSqr();
 				
 				double angle = 0;
 				if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
@@ -63,9 +61,9 @@ public abstract class GameRendererMixin {
 		} else if (CoolElytraConfig.modMode == Mode.REALISTIC) {
 			// real rolling flight
 			
-			if (this.client.player != null && this.client.player.isGliding()) {
+			if (this.minecraft.player != null && this.minecraft.player.isFallFlying()) {
 				// handle key input turning
-				if (CoolElytraClient.strafeInput != 0 && !(this.client.player.isSneaking() ^ CoolElytraConfig.swap)) {
+				if (CoolElytraClient.strafeInput != 0 && !(this.minecraft.player.isShiftKeyDown() ^ CoolElytraConfig.swap)) {
 					CoolElytraClient.yawVelocity -= CoolElytraClient.strafeInput * frameTime * CoolElytraConfig.keyYawSensitivity * 25;
 					if (CoolElytraClient.yawVelocity < -CoolElytraConfig.keyYawSpeedCap) CoolElytraClient.yawVelocity = -CoolElytraConfig.keyYawSpeedCap;
 					else if (CoolElytraClient.yawVelocity > CoolElytraConfig.keyYawSpeedCap) CoolElytraClient.yawVelocity = CoolElytraConfig.keyYawSpeedCap;
@@ -73,7 +71,7 @@ public abstract class GameRendererMixin {
 					CoolElytraClient.yawVelocity -= Math.signum(CoolElytraClient.yawVelocity) * Math.min(frameTime * CoolElytraConfig.keyYawSensitivity * 25 / CoolElytraConfig.keyYawMomentum, Math.abs(CoolElytraClient.yawVelocity));
 				}
 				
-				if (CoolElytraClient.strafeInput != 0 && (this.client.player.isSneaking() ^ CoolElytraConfig.swap)) {
+				if (CoolElytraClient.strafeInput != 0 && (this.minecraft.player.isShiftKeyDown() ^ CoolElytraConfig.swap)) {
 					CoolElytraClient.rollVelocity -= CoolElytraClient.strafeInput * frameTime * CoolElytraConfig.keyRollSensitivity * 25;
 					if (CoolElytraClient.rollVelocity < -CoolElytraConfig.keyRollSpeedCap) CoolElytraClient.rollVelocity = -CoolElytraConfig.keyRollSpeedCap;
 					else if (CoolElytraClient.rollVelocity > CoolElytraConfig.keyRollSpeedCap) CoolElytraClient.rollVelocity = CoolElytraConfig.keyRollSpeedCap;
@@ -83,12 +81,12 @@ public abstract class GameRendererMixin {
 				
 				CoolElytraClient.isKeyUpdate = true;
 				CoolElytraClient.cursorDeltaZ = CoolElytraClient.yawVelocity;
-				this.client.player.changeLookDirection(CoolElytraClient.rollVelocity, 0);
+				this.minecraft.player.turn(CoolElytraClient.rollVelocity, 0);
 				CoolElytraClient.isKeyUpdate = false;
 				
 				
-				double angle = -Math.acos(CoolElytraClient.left.dotProduct(CoolElytraClient.getAssumedLeft(this.client.player.getYaw()))) * CoolElytraClient.TODEG;
-				if (CoolElytraClient.left.getY() < 0) angle = -angle;
+				double angle = -Math.acos(CoolElytraClient.left.dot(CoolElytraClient.getAssumedLeft(this.minecraft.player.getYRot()))) * CoolElytraClient.TODEG;
+				if (CoolElytraClient.left.y() < 0) angle = -angle;
 				CoolElytraClient.rollAngle = angle;
 				
 			} else {
@@ -104,12 +102,12 @@ public abstract class GameRendererMixin {
 		}
 	}
 	
-	public Vec3d getPlayerInstantaneousVelocity(float tickDelta) {
+	public Vec3 getPlayerInstantaneousVelocity(float tickDelta) {
 		// copying over the important bits of elytra flight code and cleaning it up
 		// this is to smooth some jitteriness caused by rotation being frame-accurate but velocity only changing each tick
 		
-		assert this.client.player != null;
-		Vec3d velocity = this.client.player.getVelocity();
+		assert this.minecraft.player != null;
+		Vec3 velocity = this.minecraft.player.getDeltaMovement();
 		if (tickDelta < 0.01f)
 			return velocity;
 		
@@ -118,11 +116,11 @@ public abstract class GameRendererMixin {
 		double newvz = velocity.z;
 		double gravity = 0.08;
 		
-		Vec3d facing = this.client.player.getRotationVector();
-		float pitchRadians = this.client.player.getPitch() * 0.017453292f;
-		double horizontalFacing2 = facing.horizontalLengthSquared();
+		Vec3 facing = this.minecraft.player.getLookAngle();
+		float pitchRadians = this.minecraft.player.getXRot() * 0.017453292f;
+		double horizontalFacing2 = facing.horizontalDistanceSqr();
 		double horizontalFacing = Math.sqrt(horizontalFacing2);
-		double horizontalSpeed = velocity.horizontalLength();
+		double horizontalSpeed = velocity.horizontalDistance();
 		
 		newvy += gravity * (-1.0 + horizontalFacing2 * 0.75);
 		
@@ -135,7 +133,7 @@ public abstract class GameRendererMixin {
 			}
 			
 			if (pitchRadians < 0.0f) { // facing upwards
-				double lift = horizontalSpeed * -(double)MathHelper.sin(pitchRadians) * 0.04;
+				double lift = horizontalSpeed * -(double)Mth.sin(pitchRadians) * 0.04;
 				newvx += -facing.x * lift / horizontalFacing;
 				newvy += lift * 3.2;
 				newvz += -facing.z * lift / horizontalFacing;
@@ -155,6 +153,6 @@ public abstract class GameRendererMixin {
 			newvz += facing.z * 0.1 + (facing.z * 1.5 - newvz) * 0.5;
 		}
 		
-		return new Vec3d(MathHelper.lerp(tickDelta, velocity.x, newvx), MathHelper.lerp(tickDelta, velocity.y, newvy), MathHelper.lerp(tickDelta, velocity.z, newvz));
+		return new Vec3(Mth.lerp(tickDelta, velocity.x, newvx), Mth.lerp(tickDelta, velocity.y, newvy), Mth.lerp(tickDelta, velocity.z, newvz));
 	}
 }
