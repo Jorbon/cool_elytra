@@ -6,7 +6,7 @@ import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
@@ -38,9 +38,9 @@ public class CoolElytraClient implements ClientModInitializer {
 	public static final double TODEG = 1 / TORAD;
 	
 	private static final KeyMapping.Category COOL_ELYTRA_CATEGORY = KeyMapping.Category.register(Identifier.parse("cool_elytra"));
-	private static KeyMapping keyClassic = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.cool_elytra.classic", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
-	private static KeyMapping keyRealism = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.cool_elytra.realism", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
-	private static KeyMapping keyDisable = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.cool_elytra.disable", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyClassic = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.classic", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyRealism = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.realism", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyDisable = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.disable", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
 	
 	
 	public static Vec3 getAssumedLeft(float yaw) {
