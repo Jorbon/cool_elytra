@@ -13,6 +13,7 @@
 	"cool_elytra.midnightconfig.classic":"§e§nClassic mode settings",
 	"cool_elytra.midnightconfig.wingPower":"Turning force (Rolling sensitivity)",
 	"cool_elytra.midnightconfig.rollSmoothing":"Camera rotation smoothing",
+	"cool_elytra.midnightconfig.rollSmoothingAfterLanding":"Smooth camera roll reset after landing",
 	"cool_elytra.midnightconfig.realistic":"§e§nRealistic mode settings",
 	"cool_elytra.midnightconfig.swap":"Swap roll and yaw (shift to roll with mouse)",
 	"cool_elytra.midnightconfig.rollSensitivity":"Roll sensitivity",

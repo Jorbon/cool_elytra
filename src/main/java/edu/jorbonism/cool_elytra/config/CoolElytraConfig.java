@@ -8,6 +8,7 @@ public class CoolElytraConfig extends MidnightConfig {
 	@Comment public static Comment classic;
 	@Entry public static double wingPower = 1.25;
 	@Entry(min = 0, max = 1) public static double rollSmoothing = 0.85;
+	@Entry public static boolean rollSmoothingAfterLanding = true;
 	@Comment public static Comment realistic;
 	@Entry public static boolean swap = false;
 	@Entry public static double rollSensitivity = 1;
