@@ -26,8 +26,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayer {
 	
 	public ClientPlayerEntityMixin(ClientLevel world, GameProfile profile) { super(world, profile); }
 	
-	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/ClientPacketListener;Lnet/minecraft/stats/StatsCounter;Lnet/minecraft/client/ClientRecipeBook;Lnet/minecraft/world/entity/player/Input;ZLnet/minecraft/world/entity/player/abilities/ChatAbilities;)V")
-	public void init(Minecraft minecraft, ClientLevel level, ClientPacketListener connection, StatsCounter stats, ClientRecipeBook recipeBook, Input lastSentInput, boolean wasSprinting, ChatAbilities chatAbilities, CallbackInfo ci) {
+	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/ClientPacketListener;Lnet/minecraft/stats/StatsCounter;Lnet/minecraft/client/ClientRecipeBook;Lnet/minecraft/world/entity/player/Input;ZLnet/minecraft/client/multiplayer/chat/ChatAbilities;)V")
+	public void init(Minecraft client, ClientLevel world, ClientPacketListener networkHandler, StatsCounter stats, ClientRecipeBook recipeBook, Input lastPlayerInput, boolean lastSprinting, ChatAbilities chatAbilities, CallbackInfo ci) {
 		CoolElytraClient.left = CoolElytraClient.getAssumedLeft(this.getYRot());
 	}
 	
