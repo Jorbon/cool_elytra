@@ -18,7 +18,7 @@ public abstract class FireworkRocketEntityMixin {
 	@Shadow private int life;
 	@Shadow private int lifeTime;
 
-	@Inject(method = "tick", at = @At("HEAD"))
+	@Inject(method = "tick", at = @At("HEAD"), require = 1, allow = 1, expect = 1)
 	public void tick(CallbackInfo ci) {
 		if (this.wasShotByEntity() && this.shooter != null && this.shooter instanceof PlayerEntity && this.shooter.isFallFlying()) {
 			CoolElytraClient.isRocketing = this.life < this.lifeTime;

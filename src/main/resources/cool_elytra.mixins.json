@@ -5,8 +5,7 @@
 	"client": [
 		"GameRendererMixin",
 		"FireworkRocketEntityMixin",
-		"ClientPlayerEntityMixin",
-		"CameraMixin"
+		"ClientPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
