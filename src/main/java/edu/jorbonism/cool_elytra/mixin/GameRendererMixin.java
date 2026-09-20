@@ -4,6 +4,9 @@ import edu.jorbonism.cool_elytra.CoolElytraClient;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
 
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -22,14 +25,12 @@ public abstract class GameRendererMixin {
 	
 	@Final @Shadow private MinecraftClient client;
 	
-	@Inject(at = @At("HEAD"), method = "renderWorld")
-	public void renderWorld(RenderTickCounter tickCounter, CallbackInfo ci) {
+	@Inject(at = @At("HEAD"), method = "renderWorld", require = 1, allow = 1, expect = 1)
+	public void renderWorld(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
 		// timer stuff
 		long time = System.nanoTime();
 		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
 		CoolElytraClient.lastTime = time;
-		
-		float tickDelta = tickCounter.getTickDelta(true);
 		
 		CoolElytraClient.isFrontView = this.client.options.getPerspective().isFrontView();
 		
@@ -102,6 +103,8 @@ public abstract class GameRendererMixin {
 			CoolElytraClient.yawVelocity = 0;
 			CoolElytraClient.rollVelocity = 0;
 		}
+		
+		matrices.multiply(new Quaternionf(new AxisAngle4f((float)(CoolElytraClient.rollAngle * CoolElytraClient.TORAD), new Vector3f(0, 0, 1))));
 	}
 	
 	public Vec3d getPlayerInstantaneousVelocity(float tickDelta) {
