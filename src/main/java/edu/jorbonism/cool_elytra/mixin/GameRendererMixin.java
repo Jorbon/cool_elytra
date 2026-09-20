@@ -21,12 +21,13 @@ public abstract class GameRendererMixin {
 	@Final @Shadow private Minecraft minecraft;
 	
 	@Inject(at = @At("HEAD"), method = "renderLevel")
-	public void renderWorld(DeltaTracker tickCounter, CallbackInfo ci) {
+	public void renderWorld(CallbackInfo ci) {
 		// timer stuff
 		long time = System.nanoTime();
 		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
 		CoolElytraClient.lastTime = time;
 		
+		DeltaTracker tickCounter = this.minecraft.getDeltaTracker();
 		float tickDelta = tickCounter.getGameTimeDeltaPartialTick(true);
 		
 		CoolElytraClient.isFrontView = this.minecraft.options.getCameraType().isMirrored();
