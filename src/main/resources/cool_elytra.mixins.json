@@ -5,7 +5,7 @@
 	"client": [
 		"GameRendererMixin",
 		"FireworkRocketEntityMixin",
-		"ClientPlayerEntityMixin",
+		"LocalPlayerMixin",
 		"CameraMixin"
 	],
 	"injectors": {
