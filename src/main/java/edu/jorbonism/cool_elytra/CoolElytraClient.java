@@ -1,6 +1,6 @@
 package edu.jorbonism.cool_elytra;
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
 import com.mojang.blaze3d.platform.InputConstants;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig;
 import edu.jorbonism.cool_elytra.config.CoolElytraConfig.Mode;
@@ -38,9 +38,9 @@ public class CoolElytraClient implements ClientModInitializer {
 	public static final double TODEG = 1 / TORAD;
 	
 	private static final KeyMapping.Category COOL_ELYTRA_CATEGORY = KeyMapping.Category.register(Identifier.parse("cool_elytra"));
-	private static KeyMapping keyClassic = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.classic", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
-	private static KeyMapping keyRealism = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.realism", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
-	private static KeyMapping keyDisable = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.disable", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyClassic = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.classic", InputConstants.Type.KEYBOARD, SDLKeycode.SDLK_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyRealism = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.realism", InputConstants.Type.KEYBOARD, SDLKeycode.SDLK_UNKNOWN, COOL_ELYTRA_CATEGORY));
+	private static KeyMapping keyDisable = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.cool_elytra.disable", InputConstants.Type.KEYBOARD, SDLKeycode.SDLK_UNKNOWN, COOL_ELYTRA_CATEGORY));
 	
 	
 	public static Vec3 getAssumedLeft(float yaw) {

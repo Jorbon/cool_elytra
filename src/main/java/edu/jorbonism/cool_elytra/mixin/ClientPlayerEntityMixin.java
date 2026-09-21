@@ -16,6 +16,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.chat.ChatAbilities;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.ItemActivation;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.stats.StatsCounter;
 import net.minecraft.world.entity.player.Input;
@@ -26,8 +27,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayer {
 	
 	public ClientPlayerEntityMixin(ClientLevel world, GameProfile profile) { super(world, profile); }
 	
-	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/ClientPacketListener;Lnet/minecraft/stats/StatsCounter;Lnet/minecraft/client/ClientRecipeBook;Lnet/minecraft/world/entity/player/Input;ZLnet/minecraft/client/multiplayer/chat/ChatAbilities;)V")
-	public void init(Minecraft client, ClientLevel world, ClientPacketListener networkHandler, StatsCounter stats, ClientRecipeBook recipeBook, Input lastPlayerInput, boolean lastSprinting, ChatAbilities chatAbilities, CallbackInfo ci) {
+	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/ClientPacketListener;Lnet/minecraft/stats/StatsCounter;Lnet/minecraft/client/ClientRecipeBook;Lnet/minecraft/world/entity/player/Input;ZLnet/minecraft/client/multiplayer/chat/ChatAbilities;Lnet/minecraft/client/player/ItemActivation;)V")
+	public void init(Minecraft client, ClientLevel world, ClientPacketListener networkHandler, StatsCounter stats, ClientRecipeBook recipeBook, Input lastPlayerInput, boolean lastSprinting, ChatAbilities chatAbilities, ItemActivation itemActivation, CallbackInfo ci) {
 		CoolElytraClient.left = CoolElytraClient.getAssumedLeft(this.getYRot());
 	}
 	
