@@ -6,25 +6,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 
 import edu.jorbonism.cool_elytra.CoolElytraClient;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FireworkRocketEntity.class)
 public abstract class FireworkRocketEntityMixin {
 
-	@Shadow private LivingEntity shooter;
+	@Shadow private LivingEntity attachedToEntity;
 	@Shadow private int life;
-	@Shadow private int lifeTime;
+	@Shadow private int lifetime;
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {
-		if (this.wasShotByEntity() && this.shooter != null && this.shooter instanceof PlayerEntity && this.shooter.isGliding()) {
-			CoolElytraClient.isRocketing = this.life < this.lifeTime;
+		if (this.isAttachedToEntity() && this.attachedToEntity != null && this.attachedToEntity instanceof Player && this.attachedToEntity.isFallFlying()) {
+			CoolElytraClient.isRocketing = this.life < this.lifetime;
 		}
 	}
 	
-	@Shadow private boolean wasShotByEntity() { return false; }
+	@Shadow private boolean isAttachedToEntity() { return false; }
 	
 }

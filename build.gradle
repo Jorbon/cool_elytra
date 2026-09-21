@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -14,6 +14,10 @@ repositories {
 	flatDir {
         dirs "local_maven"
     }
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+	}
 }
 
 loom {
@@ -32,12 +36,11 @@ sourceSets {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.properties["fabric-api"]}"
-	modImplementation "eu.midnightdust:midnightlib:${project.properties["midnightlib"]}"
-	include "eu.midnightdust:midnightlib:${project.properties["midnightlib"]}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.properties["fabric-api"]}"
+	implementation "maven.modrinth:midnightlib:${project.properties["midnightlib"]}"
+	include "maven.modrinth:midnightlib:${project.properties["midnightlib"]}"
 }
 
 
@@ -46,6 +49,9 @@ processResources {
 	inputs.property "version", project.version
 	inputs.property "project_id", project.project_id
 	inputs.property "java_version", project.java_version
+	inputs.property "loader_version", project.loader_version
+	inputs.property "fabric_api_version", project.properties["fabric-api"].replaceFirst(/\+.*/, "")
+	inputs.property "midnightlib_version", project.properties["midnightlib"].replaceFirst(/\+.*/, "")
 	inputs.property "minecraft_compatible_range", Boolean.parseBoolean("${project.enforce_range}") ? project.minecraft_compatible_range : "\"*\""
 	
 	filesMatching("fabric.mod.json") {
@@ -54,6 +60,9 @@ processResources {
 			project_id: inputs.properties.project_id,
 			version: inputs.properties.version,
 			java_version: inputs.properties.java_version,
+			loader_version: inputs.properties.loader_version,
+			fabric_api_version: inputs.properties.fabric_api_version,
+			midnightlib_version: inputs.properties.midnightlib_version,
 			minecraft_compatible_range: inputs.properties.minecraft_compatible_range,
 		)
 	}
