@@ -21,7 +21,7 @@ public abstract class GameRendererMixin {
 	@Final @Shadow private Minecraft minecraft;
 	
 	@Inject(at = @At("HEAD"), method = "renderLevel")
-	public void renderWorld(DeltaTracker tickCounter, CallbackInfo ci) {
+	public void renderLevel(DeltaTracker tickCounter, CallbackInfo ci) {
 		// timer stuff
 		long time = System.nanoTime();
 		double frameTime = (time - CoolElytraClient.lastTime) * 1e-9;
